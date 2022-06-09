@@ -3,6 +3,7 @@ import queue
 import robot_functions as rfx
 from robot_functions import rtde_r, rtde_c
 import time
+import csv
 
 # Initialize Queue
 q = queue.Queue()

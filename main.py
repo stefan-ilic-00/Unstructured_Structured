@@ -12,7 +12,7 @@ import marker_cup_detection
 # resolution the video capture will be resized to, smaller sizes can speed up detection
 video_resolution = (640, 480)
 
-vs = VideoStream(src=0,
+vs = VideoStream(src="http://128.179.193.202:8080/video",
                  resolution=video_resolution,
                  framerate=13,
                  meter_mode="backlit",
@@ -38,7 +38,6 @@ while True:
     detected_markers, field_corners = marker_cup_detection.findArUcoMarkers(frame)
     # convert to real values
     detected_markers = marker_cup_detection.getRealCoordinates(frame, field_corners, detected_markers)
-
     cv2.imshow('RobotCamera', frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):

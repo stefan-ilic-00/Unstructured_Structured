@@ -11,7 +11,7 @@ import marker_cup_detection
 # resolution the video capture will be resized to, smaller sizes can speed up detection
 video_resolution = (640, 480)
 
-vs = VideoStream(src="http://192.168.1.36:8080/video",
+vs = VideoStream(src="http://128.179.193.202:8080/video",
                  resolution=video_resolution,
                  framerate=13,
                  meter_mode="backlit",
