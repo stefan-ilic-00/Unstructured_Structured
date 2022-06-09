@@ -2,7 +2,7 @@ import cv2
 import time
 import numpy as np
 import cv2.aruco as aruco
-import sys
+
 
 # Settings
 
@@ -56,29 +56,27 @@ def findArucoMarkers(frame, draw = True):
     return [detected_markers, field_corners]
 
 def getRealCoordinates(field_corners, detected_markers, p_width=1920, p_height=1080):
+    store_values = np.zeros(((len(detected_markers)-4), 3))
 
     # Store field corners in a matrix 4x2
     field_corners_vect = np.float32([field_corners[0], field_corners[1], field_corners[2], field_corners[3]])
     # Create array in which true coordinates will be stored, resolution is taken as the edge of the frame
     true_coordinates = np.float32([[0, 0], [p_width, 0], [p_width, p_height], [0, p_height]])
-
+    j = 0
     trans_mat = cv2.getPerspectiveTransform(field_corners_vect, true_coordinates)
     detected_true_coordinates = np.empty((len(detected_markers), 3))  # create matrix of coordinates
-
     for i, obj in enumerate(detected_markers, 0):
         # apply the transform matrix to each vector of center coordinates
         detected_true_coordinates[i] = np.dot(trans_mat, (obj["cx"], obj["cy"], 1))
         # change back the values in the detected markers list to have the real coordinates
         obj["cx"] = detected_true_coordinates[i][0] * r_width / p_width
         obj["cy"] = detected_true_coordinates[i][1] * r_height / p_height
-
         if obj["id"] > 3:
-            # a = np.copy(obj["cx"])
-            # b = np.copy(obj["cy"])
-            # c = np.copy(obj["id"])
-            print(obj["id"], obj["cx"], obj["cy"])
-
-    return (a, b, c)
+            store_values[j][0] = obj["id"]
+            store_values[j][1] = obj["cx"]
+            store_values[j][2] = obj["cy"]
+            j+=1
+    return(store_values)
 
 time.sleep(0.2)
 
@@ -93,8 +91,8 @@ while True:
     ret, img = cap.read()
     findArucoMarkers(img)
     detected_markers, field_corners = findArucoMarkers(img)
-    getRealCoordinates(field_corners, detected_markers)
-
+    positions = np.copy(getRealCoordinates(field_corners, detected_markers))
+    print(positions)
 
     cv2.imshow("Image", img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
